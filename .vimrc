@@ -14,6 +14,12 @@ set ignorecase      " ignore case when searching
 set title           " show title in console title bar
 set ttyfast         " smoother changes
 
+
+" Ultisnips settings
+let g:UltiSnipsExpandTrigger = "<C-j>"
+let g:UltiSnipsSnippetsDir = "~/.vim/bundle/ultisnips/UltiSnips"
+
+
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
