@@ -21,7 +21,13 @@ autocmd GUIEnter * set visualbell t_vb=
 let g:Powerline_symbols = 'fancy'
 set guifont=Inconsolata-dz\ for\ Powerline:h13
 
+" Colourscheme
 colorscheme wombat
+
+" Spell checking
+set spelllang=en_gb
+nmap <silent> <leader>s :set spell!<CR>
+
 
 " Ultisnips settings
 let g:UltiSnipsExpandTrigger = "<C-j>"
