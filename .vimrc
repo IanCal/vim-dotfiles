@@ -7,12 +7,14 @@ set showcmd         " display incomplete commands
 set hlsearch        " highlight searches
 set incsearch       " do incremental searching
 set ruler           " show the cursor position all the time
-set visualbell t_vb=    " turn off error beep/flash
-set novisualbell    " turn off visual bell
 set number          " show line numbers
 set ignorecase      " ignore case when searching 
 set title           " show title in console title bar
 set ttyfast         " smoother changes
+
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
+
 
 "Powerline
 
