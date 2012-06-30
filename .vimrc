@@ -19,7 +19,9 @@ autocmd GUIEnter * set visualbell t_vb=
 "Powerline
 
 let g:Powerline_symbols = 'fancy'
-set guifont=Inconsolata:h14.00
+set guifont=Inconsolata-dz\ for\ Powerline:h13
+
+colorscheme wombat
 
 " Ultisnips settings
 let g:UltiSnipsExpandTrigger = "<C-j>"
