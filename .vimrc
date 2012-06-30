@@ -1,5 +1,5 @@
 set nocompatible    " use vim defaults
-set ls=2            " allways show status line
+set ls=2            " always show status line
 set tabstop=4       " numbers of spaces of tab character
 set shiftwidth=4    " numbers of spaces to (auto)indent
 set scrolloff=3     " keep 3 lines when scrolling
@@ -15,6 +15,8 @@ set ttyfast         " smoother changes
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
 
+" Gundo settings
+let g:gundo_preview_bottom=1
 
 "Powerline
 
