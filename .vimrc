@@ -14,6 +14,10 @@ set ignorecase      " ignore case when searching
 set title           " show title in console title bar
 set ttyfast         " smoother changes
 
+"Powerline
+
+let g:Powerline_symbols = 'fancy'
+set guifont=Inconsolata:h14.00
 
 " Ultisnips settings
 let g:UltiSnipsExpandTrigger = "<C-j>"
@@ -26,6 +30,11 @@ let g:ctrlp_custom_ignore = {
 	\ 'dir':  '\.git$\|\.hg$\|\.svn$',
 	\ 'file': '\.exe$\|\.so$\|\.dll\|\.swp$',
 	\ }
+let g:ctrlp_prompt_mappings = {
+  \ 'AcceptSelection("e")': [],
+  \ 'AcceptSelection("t")': ['<cr>', '<c-m>'],
+  \ }
+
 
 
 
