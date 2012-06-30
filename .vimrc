@@ -19,6 +19,16 @@ set ttyfast         " smoother changes
 let g:UltiSnipsExpandTrigger = "<C-j>"
 let g:UltiSnipsSnippetsDir = "~/.vim/bundle/ultisnips/UltiSnips"
 
+" CTRL-P
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_custom_ignore = {
+	\ 'dir':  '\.git$\|\.hg$\|\.svn$',
+	\ 'file': '\.exe$\|\.so$\|\.dll\|\.swp$',
+	\ }
+
+
+
 
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
