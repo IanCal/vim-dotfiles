@@ -1,0 +1,184 @@
+*vaxe.txt* A plugin for working with the Haxe language. For Vim version 7.3
+
+=============================================================================
+Author:  Justin Donaldson <jdonaldson@gmail.com>              *vaxe-author*
+License: WTFPL (see |vaxe-license|)
+=============================================================================
+CONTENTS                                        *vaxe-contents*
+
+|vaxe-introduction|                   Introduction and Feature Summary
+|vaxe-functions|                      Functions
+|vaxe-settings|                       Settings
+|compiler-vaxe|                       Compiler
+
+{Incompatible with Vi}
+
+=============================================================================
+
+INTRODUCTION                                    *vaxe*
+                                                *vaxe-introduction*
+
+This plugin adds basic support for Haxe syntax, indenting, and compiling.  In
+addition, it provides functions and features for advanced vim features such as
+|omnifunc|, |makeprg|, and |ctags|, as well as supporting useful bundles such
+as |tagbar|, |neocomplcache|, |snipmate|, and |powerline|. Also included is
+syntax and support for Hxml.
+
+Vaxe uses the Haxe compiler extensively to determine code completions, and
+generate various metadata.  The compiler, in turn, uses sequences of compiler
+directives in "hxml" files in order to specify build and output options,
+similar to gnu makefiles.
+
+Vaxe has two different "build modes" that designate how to find the hxml
+file, as well as how to set up the |makeprg|.  If you're working with simple
+projects, then the default mode will work just fine.  If you have a complex
+project structure with many different sub-builds, then you may want to consider
+using |vaxe-project-mode|.  You can also set project mode by setting the
+g:vaxe_hxml variable manually. This is useful if you want to set a special
+hxml for all files in a given directory:
+
+>
+:autocmd BufNewFile,BufRead /project/* let g:vaxe_build = /project/build.hxml
+<
+
+Keep in mind that the project mode will persist throughout your entire session.
+If you wish to exit project mode, simply unset the g:vaxe_hxml variable.
+
+BUILD MODES                                     *vaxe-build*
+
+Default                                         *vaxe-default-mode*
+                        This mode is used automatically any time a *.hx file
+                        is opened.  It can be retriggered by calling
+                        |vaxe#DefaultHxml|. vaxe will search the project
+                        path for the preferred file indicated by
+                        |g:vaxe_prefer_hxml|.
+                        If it finds a preferred build file in the parent
+                        directories of the currently edited file, it will set
+                        a b:vaxe_hxml variable for the current buffer.
+                        It sets a |makeprg| that has the following behavior:
+                        It will cd to the preferred hxml directory, call the
+                        compiler with the preferred hxml, and redirect errors
+                        to standard out.
+
+Project                                         *vaxe-project-mode*
+                        This mode is used when |vaxe#ProjectHxml| is called.
+                        It will set a g:vaxe_hxml variable that will
+                        override any b:vaxe_hxml variables set by the default
+                        method.  It also sets a |makeprg| that simply executes
+                        the haxe compiler in the working directory,
+                        and redirects errors to standard out.  Project mode
+                        assumes that you will keep the same working directory
+                        throughout your vim session.
+
+Functions                                        *vaxe-functions*
+
+*vaxe#CompilerClassPaths*
+                          Retrieve the class paths for the current build target.
+
+*vaxe#Ctags*            Generate a ctags file for the current build target.
+                        This function will use the compiler class paths for the
+                        current build, which will include all standard
+                        libraries, as well as libraries from included haxelibs.
+                        vaxe also provides a tag description file that can
+                        be used with |tagbar| if it is installed.
+
+*vaxe#CurrentBuild*     Returns the current active project build file if it
+                        is specified, else it will return the default build
+                        file name if it exists.
+
+*vaxe#DefaultHxml*      Find the preferred build file recursively in the
+                        parents of the working directory. This function is
+                        called automatically whenever any hx file is opened.
+
+*vaxe#HaxeComplete*     The |omnifunc| provided for vaxe.
+
+*vaxe#OpenHxml*         Open the current build file specified with
+                        |vaxe#DefaultHxml|, or |vaxe#ProjectHxml|. You can
+                        easily add this function to a trigger:
+                        >
+                            map <leader>oh :call vaxe#OpenHxml()<CR>
+                        <
+
+*vaxe#ProjectHxml*      Find and select hxml files in the working directory.
+                        Selecting a file with this method will enter
+                        |vaxe-project-mode|.  If you have installed |tlib|,
+                        then it will use |tlib#input#List| to select hxml
+                        candidates. If you call this often, it makes sense to
+                        map it to a leader action:
+                        >
+                            map <leader>ph : call vaxe#ProjectHxml()<CR>
+                        <
+
+*vaxe#ImportClass*      Calling this function on a given line will try to 
+                        import any classes that are given for the line.  E.g. 
+                        for this line:
+                        >
+                            var l = new haxe.FastList<Int>();
+                        <
+                        vaxe#ImportClass() will try to find the FastList 
+                        definition, and import it:
+                        >
+                            import haxe.FastList;
+                            ...
+                            var l = new FastList<Int>();
+                        <
+                        If you're missing the initial package prefix, vaxe 
+                        will try to find package definitions for the given 
+                        class name using ctags.  So, if ctags are generated,
+                        it is also possible to resolve the import for this 
+                        line:
+                        >
+                            var l = new FastList<Int>();
+                        >
+                            
+
+ACTIVE TARGET                                      *omnifunc-active-target*
+
+In some cases, an hxml file may specify multiple targets via a "--next"
+directive.  The specified behavior for the compiler may be very different
+betwen --next sections.
+
+vaxe will use the first section it finds in order to generate completions.
+It is possible to specify a different target by inserting a line like this into
+your hxml:
+>
+    # vaxe
+<
+The target that vaxe uses is called the "active" target.  This target is used
+for generating completions, as well as for determining current compiler class
+paths, and for generating ctags.
+
+SETTINGS                                        *vaxe-settings*
+
+*g:vaxe_prefer_hxml*    The preferred name for hxml files to search for in
+                        default build mode. The default is "build.hxml"
+
+*g:vaxe_hxml*           A variable that indicates the |vaxe-project-mode|
+                        build file.  It will override the |vaxe-default-mode|
+                        setting if present.
+*g:vaxe_prevent_completion_bufwrite_events*
+                        vaxe uses the compiler to make completions.  This can
+                        happen frequently, and causes the buffer to be written.
+                        The default is "1" which prevents events.
+
+LICENSE                                         *vaxe-license*
+
+Copyright (C) 2012 Justin Donaldson <jdonaldson@gmail.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
