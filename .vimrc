@@ -15,6 +15,8 @@ set ttyfast         " smoother changes
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
 
+" Sudo-saver
+cmap w!! w !sudo tee % >/dev/null
 
 " Gundo settings
 let g:gundo_preview_bottom=1
