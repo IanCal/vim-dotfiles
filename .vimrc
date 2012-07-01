@@ -27,7 +27,7 @@ let g:Powerline_symbols = 'fancy'
 set guifont=Inconsolata-dz\ for\ Powerline:h13
 
 " Colourscheme
-colorscheme wombat
+colorscheme wombat256mod
 
 " Spell checking
 set spelllang=en_gb
